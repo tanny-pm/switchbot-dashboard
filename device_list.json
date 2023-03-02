@@ -1,0 +1,82 @@
+{
+  "statusCode": 100,
+  "body": {
+    "deviceList": [
+      {
+        "deviceId": "6055F9287E6A",
+        "deviceName": "キッチン",
+        "deviceType": "Color Bulb",
+        "enableCloudService": true,
+        "hubDeviceId": "000000000000"
+      },
+      {
+        "deviceId": "6055F941A1F6",
+        "deviceName": "ダウンライト",
+        "deviceType": "Color Bulb",
+        "enableCloudService": true,
+        "hubDeviceId": "000000000000"
+      },
+      {
+        "deviceId": "CC441726C165",
+        "deviceName": "カーテン",
+        "deviceType": "Curtain",
+        "enableCloudService": true,
+        "hubDeviceId": "FC2613E58A75",
+        "curtainDevicesIds": [
+          "CC441726C165"
+        ],
+        "calibrate": true,
+        "group": false,
+        "master": true,
+        "openDirection": "left"
+      },
+      {
+        "deviceId": "EC4E72BB4FDD",
+        "deviceName": "温湿度計プラス",
+        "deviceType": "MeterPlus",
+        "enableCloudService": true,
+        "hubDeviceId": "FC2613E58A75"
+      },
+      {
+        "deviceId": "FAF8BF1D124A",
+        "deviceName": "開閉センサー",
+        "deviceType": "Contact Sensor",
+        "enableCloudService": true,
+        "hubDeviceId": "FC2613E58A75"
+      },
+      {
+        "deviceId": "FC2613E58A75",
+        "deviceName": "ハブミニ ",
+        "deviceType": "Hub Mini",
+        "hubDeviceId": "000000000000"
+      }
+    ],
+    "infraredRemoteList": [
+      {
+        "deviceId": "02-202211292122-55141490",
+        "deviceName": "テレビ",
+        "remoteType": "TV",
+        "hubDeviceId": "FC2613E58A75"
+      },
+      {
+        "deviceId": "02-202211292127-47346813",
+        "deviceName": "ライト",
+        "remoteType": "DIY Light",
+        "hubDeviceId": "FC2613E58A75"
+      },
+      {
+        "deviceId": "02-202212062123-12951329",
+        "deviceName": "エアコン",
+        "remoteType": "Air Conditioner",
+        "hubDeviceId": "FC2613E58A75"
+      },
+      {
+        "deviceId": "02-202301081344-41871307",
+        "deviceName": "扇風機",
+        "remoteType": "DIY Fan",
+        "hubDeviceId": "FC2613E58A75"
+      }
+    ]
+  },
+  "message": "success"
+}

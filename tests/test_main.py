@@ -1,4 +1,4 @@
-from pyproject_template.pyproject_template import main
+from src.pyproject_template import main
 
 
 def test_main(capsys):
