@@ -83,9 +83,11 @@ if __name__ == "__main__":
         device_list = s["body"]["deviceList"]
 
     for d in device_list:
-        print(d)
-        status = get_device_status(d)
-        try:
-            save_device_status(status)
-        except Exception as e:
-            print(f"Error: {e}")
+        device_type = d.get("deviceType")
+        if device_type == "MeterPlus":
+            status = get_device_status(d)
+            device_type = status.get("deviceType")
+            try:
+                save_device_status(status)
+            except Exception as e:
+                print(f"Error: {e}")
