@@ -4,8 +4,10 @@ import hmac
 import json
 import os
 import time
+from time import sleep
 
 import requests
+import schedule
 from dotenv import load_dotenv
 from influxdb_client import InfluxDBClient, Point
 from influxdb_client.client.write_api import SYNCHRONOUS
@@ -15,7 +17,7 @@ load_dotenv(".env")
 # InfluxDB
 INFLUXDB_TOKEN = os.environ["INFLUXDB_TOKEN"]
 bucket = "switchbot"
-client = InfluxDBClient(url="http://localhost:8086", token=INFLUXDB_TOKEN, org="org")
+client = InfluxDBClient(url="http://influxdb:8086", token=INFLUXDB_TOKEN, org="org")
 write_api = client.write_api(write_options=SYNCHRONOUS)
 query_api = client.query_api()
 
@@ -69,14 +71,16 @@ def save_device_status(status: dict):
         p = (
             Point("MeterPlus")
             .tag("device_id", status["deviceId"])
-            .field("humidity", status["humidity"])
-            .field("temperature", status["temperature"])
+            .field("humidity", float(status["humidity"]))
+            .field("temperature", float(status["temperature"]))
         )
+
         write_api.write(bucket=bucket, record=p)
         print(f"Save:{status}")
 
 
-if __name__ == "__main__":
+def task():
+    """定期実行するタスク"""
 
     with open("device_list.json", "r") as f:
         s = json.load(f)
@@ -91,3 +95,11 @@ if __name__ == "__main__":
                 save_device_status(status)
             except Exception as e:
                 print(f"Error: {e}")
+
+
+if __name__ == "__main__":
+    schedule.every(5).minutes.do(task)
+
+    while True:
+        schedule.run_pending()
+        sleep(1)

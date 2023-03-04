@@ -1,23 +1,32 @@
 version: "3"
+
 services:
+  
+  python:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    tty: true
+
   influxdb:
     image: influxdb:2.6.1
     ports:
       - "8086:8086"
     volumes:
-      - ./influxdb/data:/var/lib/influxdb2
-      - ./influxdb/config:/etc/influxdb2
+      - ./docker/influxdb/data:/var/lib/influxdb2
+      - ./docker/influxdb/config:/etc/influxdb2
     environment:
       - DOCKER_INFLUXDB_INIT_MODE=setup
       - DOCKER_INFLUXDB_INIT_USERNAME=user
       - DOCKER_INFLUXDB_INIT_PASSWORD=password
       - DOCKER_INFLUXDB_INIT_ORG=org
       - DOCKER_INFLUXDB_INIT_BUCKET=switchbot
+
   grafana:
     image: grafana/grafana-oss:9.4.1
     ports:
       - "3000:3000"
     volumes:
-      - ./grafana/data:/var/lib/grafana
+      - ./docker/grafana/data:/var/lib/grafana
     depends_on:
       - influxdb
