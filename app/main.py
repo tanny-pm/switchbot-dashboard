@@ -55,9 +55,15 @@ def get_device_status(device: dict) -> dict:
     device_id = device["deviceId"]
     url = f"{API_BASE_URL}/v1.1/devices/{device_id}/status"
 
-    r = requests.get(url, headers=headers)
+    try:
+        r = requests.get(url, headers=headers)
+    except Exception as e:
+        raise ValueError(f"Request error: {e}")
 
-    device_data = r.json()["body"]
+    try:
+        device_data = r.json()["body"]
+    except Exception as e:
+        raise ValueError(f"Response error: {e}")
 
     return device_data
 
@@ -89,12 +95,16 @@ def task():
     for d in device_list:
         device_type = d.get("deviceType")
         if device_type == "MeterPlus":
-            status = get_device_status(d)
-            device_type = status.get("deviceType")
+            try:
+                status = get_device_status(d)
+            except Exception as e:
+                print(f"Request error: {e}")
+                continue
+
             try:
                 save_device_status(status)
             except Exception as e:
-                print(f"Error: {e}")
+                print(f"Save error: {e}")
 
 
 if __name__ == "__main__":

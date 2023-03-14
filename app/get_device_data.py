@@ -33,7 +33,7 @@ def generate_sign(token: str, secret: str, nonce: str) -> tuple[str, str]:
 
 
 def get_device_data() -> str:
-    """ "温湿度計の気温情報を取得する"""
+    """ "温湿度計の情報を取得する"""
 
     nonce = "zzz"
     t, sign = generate_sign(ACCESS_TOKEN, SECRET, nonce)
