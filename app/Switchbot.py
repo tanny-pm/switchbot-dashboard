@@ -1,6 +1,7 @@
 import base64
 import hashlib
 import hmac
+import json
 import os
 import time
 
@@ -20,7 +21,7 @@ class Switchbot:
         self.access_token = access_token
         self.secret = secret
 
-    def generate_sign(self, nonce: str = "") -> tuple[str, str]:
+    def __generate_sign(self, nonce: str = "") -> tuple[str, str]:
         """SWITCH BOT APIの認証キーを生成する"""
 
         t = int(round(time.time() * 1000))
@@ -37,7 +38,7 @@ class Switchbot:
         """SWITCH BOTのデバイスリストを取得する"""
 
         nonce = "zzz"
-        t, sign = self.generate_sign(nonce)
+        t, sign = self.__generate_sign(nonce)
         headers = {
             "Authorization": ACCESS_TOKEN,
             "t": t,
@@ -57,7 +58,7 @@ class Switchbot:
         """Switchbotデバイスのステータスを取得する"""
 
         nonce = "zzz"
-        t, sign = self.generate_sign(nonce)
+        t, sign = self.__generate_sign(nonce)
         headers = {
             "Authorization": ACCESS_TOKEN,
             "t": t,
@@ -77,9 +78,9 @@ class Switchbot:
 
 
 if __name__ == "__main__":
+    # デバイスリストを出力する
     bot = Switchbot(ACCESS_TOKEN, SECRET)
     device_list = bot.get_device_list()
 
-    for device in device_list:
-        r = bot.get_device_status(device)
-        print(r)
+    with open("./device_list.json", "w") as f:
+        f.write(json.dumps(device_list, indent=2, ensure_ascii=False))

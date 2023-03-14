@@ -11,6 +11,7 @@ import schedule
 from dotenv import load_dotenv
 from influxdb_client import InfluxDBClient, Point
 from influxdb_client.client.write_api import SYNCHRONOUS
+from Switchbot import Switchbot
 
 load_dotenv(".env")
 
@@ -22,50 +23,8 @@ write_api = client.write_api(write_options=SYNCHRONOUS)
 query_api = client.query_api()
 
 # SwitchBot
-API_BASE_URL = "https://api.switch-bot.com"
 ACCESS_TOKEN: str = os.environ["SWITCHBOT_ACCESS_TOKEN"]
 SECRET: str = os.environ["SWITCHBOT_SECRET"]
-
-
-def generate_sign(token: str, secret: str, nonce: str) -> tuple[str, str]:
-    """SWITCH BOT APIの認証キーを生成する"""
-
-    t = int(round(time.time() * 1000))
-    string_to_sign = "{}{}{}".format(token, t, nonce)
-    string_to_sign_b = bytes(string_to_sign, "utf-8")
-    secret_b = bytes(secret, "utf-8")
-    sign = base64.b64encode(
-        hmac.new(secret_b, msg=string_to_sign_b, digestmod=hashlib.sha256).digest()
-    )
-
-    return (str(t), str(sign, "utf-8"))
-
-
-def get_device_status(device: dict) -> dict:
-    """Switchbotデバイスのステータスを取得する"""
-
-    nonce = "zzz"
-    t, sign = generate_sign(ACCESS_TOKEN, SECRET, nonce)
-    headers = {
-        "Authorization": ACCESS_TOKEN,
-        "t": t,
-        "sign": sign,
-        "nonce": nonce,
-    }
-    device_id = device["deviceId"]
-    url = f"{API_BASE_URL}/v1.1/devices/{device_id}/status"
-
-    try:
-        r = requests.get(url, headers=headers)
-    except Exception as e:
-        raise ValueError(f"Request error: {e}")
-
-    try:
-        device_data = r.json()["body"]
-    except Exception as e:
-        raise ValueError(f"Response error: {e}")
-
-    return device_data
 
 
 def save_device_status(status: dict):
@@ -82,21 +41,21 @@ def save_device_status(status: dict):
         )
 
         write_api.write(bucket=bucket, record=p)
-        print(f"Save:{status}")
+        print(f"Saved:{status}")
 
 
 def task():
     """定期実行するタスク"""
+    bot = Switchbot(ACCESS_TOKEN, SECRET)
 
     with open("device_list.json", "r") as f:
-        s = json.load(f)
-        device_list = s["body"]["deviceList"]
+        device_list = json.load(f)
 
     for d in device_list:
         device_type = d.get("deviceType")
         if device_type == "MeterPlus":
             try:
-                status = get_device_status(d)
+                status = bot.get_device_status(d)
             except Exception as e:
                 print(f"Request error: {e}")
                 continue
