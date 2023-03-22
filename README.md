@@ -9,7 +9,6 @@ Dashboard for Switchbot using InfluxDB and Grafana.
 ```
 SWITCHBOT_ACCESS_TOKEN=
 SWITCHBOT_SECRET=
-SWITCHBOT_DEVICE_ID=
 INFLUXDB_TOKEN=
 ```
 
