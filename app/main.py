@@ -1,17 +1,18 @@
-import base64
-import hashlib
-import hmac
 import json
+import logging
 import os
-import time
 from time import sleep
 
-import requests
 import schedule
 from dotenv import load_dotenv
 from influxdb_client import InfluxDBClient, Point
 from influxdb_client.client.write_api import SYNCHRONOUS
-from Switchbot import Switchbot
+from switchbot import Switchbot
+
+# Logging
+formatter = "[%(levelname)-8s] %(asctime)s %(funcName)s %(message)s"
+logging.basicConfig(level=logging.INFO, format=formatter)
+logger = logging.getLogger(__name__)
 
 load_dotenv(".env")
 
@@ -41,7 +42,7 @@ def save_device_status(status: dict):
         )
 
         write_api.write(bucket=bucket, record=p)
-        print(f"Saved:{status}")
+        logging.info(f"Saved: {status}")
 
 
 def task():
@@ -55,15 +56,15 @@ def task():
         device_type = d.get("deviceType")
         if device_type == "MeterPlus":
             try:
-                status = bot.get_device_status(d)
+                status = bot.get_device_status(d.get("deviceId"))
             except Exception as e:
-                print(f"Request error: {e}")
+                logging.error(f"Request error: {e}")
                 continue
 
             try:
                 save_device_status(status)
             except Exception as e:
-                print(f"Save error: {e}")
+                logging.error(f"Save error: {e}")
 
 
 if __name__ == "__main__":
